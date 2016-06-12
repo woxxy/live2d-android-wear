@@ -47,8 +47,6 @@ static void printGLString(const char *name, GLenum s) {
 	LOGI("GL %s = %s\n", name, v);
 }
 
-
-
 //////////////////////////////////////////////////////////////////////////////
 
 
@@ -62,6 +60,7 @@ static float matrix[] = {
 	0,0,0,1
 };
 
+static bool isLive2DInstantiated = false;
 
 JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeLoadLive2DModel(JNIEnv* env, jobject thiz, jbyteArray bytes, jint len) {
 	LOGI("nativeLoadLive2DModel");
@@ -109,7 +108,11 @@ JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeLoadTexture(JNIEnv*
 JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnSurfaceCreated(JNIEnv* env, jobject thiz) {
 	LOGI("nativeOnSurfaceCreated");
 
-	Live2D::init();
+    if (isLive2DInstantiated) {
+        Live2D::dispose();
+    }
+    Live2D::init();
+    isLive2DInstantiated = true;
 
 	printGLString("Version",    GL_VERSION);
 	printGLString("Vendor",     GL_VENDOR);
@@ -129,11 +132,11 @@ JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnSurfaceChanged(JN
 	float h = live2DModel->getCanvasHeight();
 	LOGI("Live2D Model w: %f  h: %f \n", w, h);
 
-	matrix[0]=1.0/w*2;
-	matrix[5]=-1.0/w*2.0*((float)width/height);
+	matrix[0] = 1.0 / w * 2;
+	matrix[5] = -1.0 / w * 2.0 * ((float) width / height);
 
-	matrix[12]=-1;
-	matrix[13]=1;
+	matrix[12] = -1;
+	matrix[13] = 1;
 	live2DModel->setMatrix(matrix);
 }
 
@@ -142,7 +145,7 @@ JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnDrawFrame(JNIEnv*
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	double t = (UtSystem::getUserTimeMSec()/1000.0) * 2 * M_PI ;
+	double t = (UtSystem::getUserTimeMSec() / 1000.0) * 2 * M_PI ;
 	live2DModel->setParamFloat("PARAM_ANGLE_X", (float)(30 * sin( t/3.0 )) );
 
 	live2DModel->update();

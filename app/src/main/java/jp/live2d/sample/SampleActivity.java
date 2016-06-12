@@ -34,16 +34,16 @@ public class SampleActivity extends WearableActivity
     public void onResume()
     {
         Log.d(TAG, "resume");
-        GLView.onResume();
         super.onResume();
+        GLView.onResume();
     }
 
     @Override
     public void onPause()
     {
-        Log.d(TAG, "pause");
-        GLView.onPause();
         super.onPause();
+        GLView.onPause();
+        Log.d(TAG, "pause");
     }
 
     @Override

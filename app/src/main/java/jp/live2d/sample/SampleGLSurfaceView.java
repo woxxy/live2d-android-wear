@@ -25,10 +25,4 @@ public class SampleGLSurfaceView extends GLSurfaceView
 
 		setRenderer(renderer);
 	}
-
-    public void onPause()
-    {
-        JniBridge.nativeOnSurfaceDestroyed();
-        super.onPause();
-    }
 }
