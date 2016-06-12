@@ -120,11 +120,6 @@ JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnSurfaceCreated(JN
 	printGLString("Extensions", GL_EXTENSIONS);
 }
 
-JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnSurfaceDestroyed(JNIEnv* env, jobject thiz) {
-	Live2D::dispose();
-}
-
-
 JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnSurfaceChanged(JNIEnv* env, jobject thiz, jint width, jint height) {
 	glViewport(0, 0, width, height);
 
@@ -145,7 +140,7 @@ JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnDrawFrame(JNIEnv*
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	double t = (UtSystem::getUserTimeMSec() / 1000.0) * 2 * M_PI ;
+	double t = (UtSystem::getUserTimeMSec() / 1000.0) * 2 * M_PI;
 	live2DModel->setParamFloat("PARAM_ANGLE_X", (float)(30 * sin( t/3.0 )) );
 
 	live2DModel->update();

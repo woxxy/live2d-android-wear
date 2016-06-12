@@ -6,7 +6,6 @@ public final class JniBridge {
 	}
 
 	public static native void nativeOnSurfaceCreated();
-	public static native void nativeOnSurfaceDestroyed();
 	public static native void nativeOnSurfaceChanged(int width, int height);
 	public static native void nativeOnDrawFrame();
 	
