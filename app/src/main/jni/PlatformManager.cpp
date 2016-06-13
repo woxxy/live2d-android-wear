@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <android/log.h>
+#include <util/UtFile.h>
 
 #include "PlatformManager.h"
 #include "util/UtDebug.h"
@@ -18,24 +19,15 @@ PlatformManager::~PlatformManager(void) {}
 
 unsigned char* PlatformManager::loadBytes(const char* path, size_t* size)
 {
-    LOGD(path);
-    FILE * file = fopen(path, "r+");
-    if (file == NULL) {
-        LOGD("File not found");
-        // return;
+    int int_size = 0 ;
+    char * buf = UtFile::loadFile(path, &int_size) ;
+    size = (size_t*) int_size;
+    if(buf == NULL){
+        UtDebug::error( "load file failed : file : %s @PlatformManager#loadBytes()" , path) ;
+        return NULL ;
     }
 
-    fseek(file, 0, SEEK_END);
-    unsigned long int int_size = (unsigned long int) ftell(file);
-    size = (size_t*) int_size;
-    fclose(file);
-
-    file = fopen(path, "r+");
-    unsigned char * in = (unsigned char *) malloc(int_size);
-    int bytes_read = fread(in, sizeof(unsigned char), int_size, file);
-    fclose(file);
-
-    return in;
+    return (unsigned char*) buf;
 }
 
 void PlatformManager::releaseBytes(void* data)
