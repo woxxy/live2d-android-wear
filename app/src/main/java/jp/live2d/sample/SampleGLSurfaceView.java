@@ -20,7 +20,7 @@ public class SampleGLSurfaceView extends GLSurfaceView
 
 		renderer = new SampleGLRenderer() ;
 		renderer.setContext(getContext());
-		//setDebugFlags(DEBUG_CHECK_GL_ERROR | DEBUG_LOG_GL_CALLS);
+		setDebugFlags(DEBUG_CHECK_GL_ERROR | DEBUG_LOG_GL_CALLS);
 		setEGLContextClientVersion(2);
 
 		setRenderer(renderer);
