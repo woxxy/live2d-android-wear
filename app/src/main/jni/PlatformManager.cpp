@@ -19,15 +19,13 @@ PlatformManager::~PlatformManager(void) {}
 
 unsigned char* PlatformManager::loadBytes(const char* path, size_t* size)
 {
-    int int_size = 0 ;
-    char * buf = UtFile::loadFile(path, &int_size) ;
-    size = (size_t*) int_size;
+    unsigned char * buf = (unsigned char*) UtFile::loadFile(path, (int*) size) ;
     if(buf == NULL){
         UtDebug::error( "load file failed : file : %s @PlatformManager#loadBytes()" , path) ;
         return NULL ;
     }
 
-    return (unsigned char*) buf;
+    return buf;
 }
 
 void PlatformManager::releaseBytes(void* data)
@@ -91,14 +89,12 @@ L2DTextureDesc* PlatformManager::loadTexture(ALive2DModel* model, int no, const 
     glBindTexture(GL_TEXTURE_2D, textures[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 
-
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     ((Live2DModelOpenGL*)model)->setTexture(no, textures[0]) ;
 
-    //LAppTextureDesc* desc = new LAppTextureDesc(texture);
-    L2DTextureDesc *textureDesc = new L2DTextureDesc();
+    L2DTextureDesc *textureDesc = new L2DTextureDesc(textures[0]);
 
     env->ReleaseIntArrayElements(array, pixels, 0);
     //env->DeleteGlobalRef(array);

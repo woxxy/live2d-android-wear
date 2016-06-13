@@ -15,8 +15,11 @@ namespace live2d
 		class L2DTextureDesc 
 		{
 		public:
-			L2DTextureDesc();
+			L2DTextureDesc(unsigned int data);
 			virtual ~L2DTextureDesc();
+		private:
+			unsigned int data;
 		};
+
 	}
 }

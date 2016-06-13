@@ -16,6 +16,7 @@
 #include "Live2DSimple.h"
 #include "PlatformManager.h"
 #include "Global.h"
+#include "live2dframework/L2DBaseModel.h"
 
 using namespace live2d;
 using namespace live2d::framework;
@@ -25,7 +26,8 @@ static void printGLString(const char *name, GLenum s) {
 	LOGI("GL %s = %s\n", name, v);
 }
 
-static Live2DModelOpenGL* live2DModel;
+//static Live2DModelOpenGL* live2DModel;
+static L2DBaseModel* baseModel;
 
 static float matrix[] = {
 	1,0,0,0,
@@ -41,8 +43,8 @@ JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeLoadLive2DModel(JNI
 
     const char* _path = env->GetStringUTFChars(path, 0);
     LOGD(_path);
-    live2DModel = (Live2DModelOpenGL *) Live2DFramework::getPlatformManager()->loadLive2DModel(_path);
-    live2DModel->setPremultipliedAlpha(false);
+    baseModel->loadModelData( _path);
+    baseModel->getLive2DModel()->setPremultipliedAlpha(false);
 
     env->ReleaseStringUTFChars(path, _path);
 }
@@ -55,7 +57,7 @@ JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeLoadTexture(JNIEnv*
     currentPngmgr = pngmgr;
 
     const char* _path = env->GetStringUTFChars(path, 0);
-    Live2DFramework::getPlatformManager()->loadTexture(live2DModel, no, _path);
+    baseModel->loadTexture(no, _path);
     env->ReleaseStringUTFChars(path, _path);
 }
 
@@ -74,13 +76,14 @@ JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnSurfaceCreated(JN
 	printGLString("Extensions", GL_EXTENSIONS);
 
     Live2DFramework::setPlatformManager(new PlatformManager());
+    baseModel = new L2DBaseModel();
 }
 
 JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnSurfaceChanged(JNIEnv* env, jobject thiz, jint width, jint height) {
 	glViewport(0, 0, width, height);
 
-	float w = live2DModel->getCanvasWidth();
-	float h = live2DModel->getCanvasHeight();
+	float w = baseModel->getLive2DModel()->getCanvasWidth();
+	float h = baseModel->getLive2DModel()->getCanvasHeight();
 	LOGI("Live2D Model w: %f  h: %f \n", w, h);
 
     matrix[0] = 1.0f / w * 3.0f;
@@ -90,7 +93,7 @@ JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnSurfaceChanged(JN
 	matrix[12] = -1.5f;
     // distance from bottom
 	matrix[13] = 1.0f;
-	live2DModel->setMatrix(matrix);
+    ((Live2DModelOpenGL *)baseModel->getLive2DModel())->setMatrix(matrix);
 }
 
 
@@ -99,9 +102,9 @@ JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnDrawFrame(JNIEnv*
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	double t = (UtSystem::getUserTimeMSec() / 1000.0) * 2 * M_PI;
-	live2DModel->setParamFloat("PARAM_ANGLE_X", (float) (30 * sin(t / 3.0)));
-    live2DModel->setParamFloat("PARAM_BREATH", (float) (0.5f + 0.5f * sin(t / 3.2345)), 1);
+	baseModel->getLive2DModel()->setParamFloat("PARAM_ANGLE_X", (float) (30 * sin(t / 3.0)));
+    baseModel->getLive2DModel()->setParamFloat("PARAM_BREATH", (float) (0.5f + 0.5f * sin(t / 3.2345)), 1);
 
-	live2DModel->update();
-	live2DModel->draw();
+    baseModel->getLive2DModel()->update();
+    baseModel->getLive2DModel()->draw();
 }

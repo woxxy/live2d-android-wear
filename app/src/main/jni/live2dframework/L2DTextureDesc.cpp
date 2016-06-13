@@ -11,8 +11,9 @@ namespace live2d
 {
 	namespace framework
 	{
-		L2DTextureDesc::L2DTextureDesc()
+		L2DTextureDesc::L2DTextureDesc(unsigned int texture)
 		{
+			data = texture;
 		}
 
 		L2DTextureDesc::~L2DTextureDesc()
