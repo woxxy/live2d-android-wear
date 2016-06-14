@@ -16,7 +16,7 @@
 #include "Live2DSimple.h"
 #include "PlatformManager.h"
 #include "Global.h"
-#include "live2dframework/L2DBaseModel.h"
+#include "L2DModel.h"
 
 using namespace live2d;
 using namespace live2d::framework;
@@ -27,7 +27,7 @@ static void printGLString(const char *name, GLenum s) {
 }
 
 //static Live2DModelOpenGL* live2DModel;
-static L2DBaseModel* baseModel;
+L2DModel* baseModel;
 
 static float matrix[] = {
 	1,0,0,0,
@@ -76,24 +76,12 @@ JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnSurfaceCreated(JN
 	printGLString("Extensions", GL_EXTENSIONS);
 
     Live2DFramework::setPlatformManager(new PlatformManager());
-    baseModel = new L2DBaseModel();
+    baseModel = new L2DModel();
 }
 
 JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnSurfaceChanged(JNIEnv* env, jobject thiz, jint width, jint height) {
 	glViewport(0, 0, width, height);
-
-	float w = baseModel->getLive2DModel()->getCanvasWidth();
-	float h = baseModel->getLive2DModel()->getCanvasHeight();
-	LOGI("Live2D Model w: %f  h: %f \n", w, h);
-
-    matrix[0] = 1.0f / w * 3.0f;
-	matrix[5] = -1.0f / w * 3.0f * ((float) width / height);
-
-    // distance from right
-	matrix[12] = -1.5f;
-    // distance from bottom
-	matrix[13] = 1.0f;
-    ((Live2DModelOpenGL *)baseModel->getLive2DModel())->setMatrix(matrix);
+    baseModel->setMatrix(width, height);
 }
 
 
@@ -101,10 +89,11 @@ JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnDrawFrame(JNIEnv*
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	double t = (UtSystem::getUserTimeMSec() / 1000.0) * 2 * M_PI;
-	baseModel->getLive2DModel()->setParamFloat("PARAM_ANGLE_X", (float) (30 * sin(t / 3.0)));
-    baseModel->getLive2DModel()->setParamFloat("PARAM_BREATH", (float) (0.5f + 0.5f * sin(t / 3.2345)), 1);
+    baseModel->draw();
 
-    baseModel->getLive2DModel()->update();
+	//double t = (UtSystem::getUserTimeMSec() / 1000.0) * 2 * M_PI;
+	//baseModel->getLive2DModel()->setParamFloat("PARAM_ANGLE_X", (float) (30 * sin(t / 3.0)));
+    //baseModel->getLive2DModel()->setParamFloat("PARAM_BREATH", (float) (0.5f + 0.5f * sin(t / 3.2345)), 1);
+
     baseModel->getLive2DModel()->draw();
 }
