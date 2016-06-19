@@ -1,5 +1,5 @@
 #include <jni.h>
 
+using namespace std;
+
 extern JNIEnv* currentJNIEnv;
-extern jobject currentPngmgr;
-extern jobject currentJObject;

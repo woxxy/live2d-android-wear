@@ -8,15 +8,10 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
+
 extern "C" {
-JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeSetPngManager(JNIEnv* env, jobject thiz, jobject pngmgr);
-
-JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeLoadTexture(JNIEnv* env, jobject thiz, jint no, jstring path, jobject pngmgr);
-JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeLoadLive2DModel(JNIEnv* env, jobject thiz, jstring path);
-
+JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnCreate(JNIEnv* env, jobject thiz, jstring assetsPath);
 JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnSurfaceCreated(JNIEnv* env, jobject thiz);
-JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnSurfaceDestroyed(JNIEnv* env, jobject thiz);
 JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnSurfaceChanged(JNIEnv* env, jobject thiz, jint width, jint height);
 JNIEXPORT void JNICALL Java_jp_live2d_sample_JniBridge_nativeOnDrawFrame(JNIEnv* env, jobject thiz);
-
 }

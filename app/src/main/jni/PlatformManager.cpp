@@ -4,7 +4,6 @@
 #include <util/UtFile.h>
 
 #include "PlatformManager.h"
-#include "util/UtDebug.h"
 #include "Live2DModelOpenGL.h"
 #include "Live2DSimple.h"
 #include "Global.h"
@@ -48,28 +47,28 @@ ALive2DModel* PlatformManager::loadLive2DModel(const char* path)
 L2DTextureDesc* PlatformManager::loadTexture(ALive2DModel* model, int no, const char* path)
 {
     JNIEnv* env = currentJNIEnv;
-    jobject pngmgr = currentPngmgr;
 
-    jclass cls = env->GetObjectClass(pngmgr);
+    jclass cls;// = env->GetObjectClass(pngmgr);
+    jclass pngmgr = cls = env->FindClass("jp/live2d/sample/support/BitmapLoader");
+
     jmethodID mid;
-
-    mid = env->GetMethodID(cls, "open", "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
+    mid = env->GetStaticMethodID(cls, "open", "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
     jstring name = env->NewStringUTF(path);
-    jobject png = env->CallObjectMethod(pngmgr, mid, name);
+    jobject png = env->CallStaticObjectMethod(pngmgr, mid, name);
     env->DeleteLocalRef(name);
-    env->NewGlobalRef(png);
+    env->NewLocalRef(png);
 
     /* Get image dimensions */
-    mid = env->GetMethodID(cls, "getWidth", "(Landroid/graphics/Bitmap;)I");
-    int width = env->CallIntMethod(pngmgr, mid, png);
-    mid = env->GetMethodID(cls, "getHeight", "(Landroid/graphics/Bitmap;)I");
-    int height = env->CallIntMethod(pngmgr, mid, png);
+    mid = env->GetStaticMethodID(cls, "getWidth", "(Landroid/graphics/Bitmap;)I");
+    int width = env->CallStaticIntMethod(pngmgr, mid, png);
+    mid = env->GetStaticMethodID(cls, "getHeight", "(Landroid/graphics/Bitmap;)I");
+    int height = env->CallStaticIntMethod(pngmgr, mid, png);
 
     /* Get pixels */
     jintArray array = env->NewIntArray(width * height);
-    env->NewGlobalRef(array);
-    mid = env->GetMethodID(cls, "getPixels", "(Landroid/graphics/Bitmap;[I)V");
-    env->CallVoidMethod(pngmgr, mid, png, array);
+    env->NewLocalRef(array);
+    mid = env->GetStaticMethodID(cls, "getPixels", "(Landroid/graphics/Bitmap;[I)V");
+    env->CallStaticVoidMethod(pngmgr, mid, png, array);
 
     jint *pixels = env->GetIntArrayElements(array, 0);
 
@@ -97,10 +96,10 @@ L2DTextureDesc* PlatformManager::loadTexture(ALive2DModel* model, int no, const 
     L2DTextureDesc *textureDesc = new L2DTextureDesc(textures[0]);
 
     env->ReleaseIntArrayElements(array, pixels, 0);
-    //env->DeleteGlobalRef(array);
-    mid = env->GetMethodID(cls, "close", "(Landroid/graphics/Bitmap;)V");
-    env->CallVoidMethod(pngmgr, mid, png);
-    //env->DeleteGlobalRef(png);
+    env->DeleteLocalRef(array);
+    mid = env->GetStaticMethodID(cls, "close", "(Landroid/graphics/Bitmap;)V");
+    env->CallStaticVoidMethod(pngmgr, mid, png);
+    env->DeleteLocalRef(png);
 
     return textureDesc;
 }

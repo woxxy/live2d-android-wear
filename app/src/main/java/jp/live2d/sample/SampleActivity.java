@@ -1,10 +1,3 @@
-/**
- *
- *  You can modify and use this source freely
- *  only for the development of application related Live2D.
- *
- *  (c) Live2D Inc. All rights reserved.
- */
 package jp.live2d.sample;
 
 
@@ -12,7 +5,7 @@ import android.os.Bundle;
 import android.support.wearable.activity.WearableActivity;
 import android.util.Log;
 
-import jp.live2d.sample.support.BitmapLoader;
+import jp.live2d.sample.support.AssetsToSd;
 
 
 public class SampleActivity extends WearableActivity
@@ -26,7 +19,10 @@ public class SampleActivity extends WearableActivity
     {
         super.onCreate(savedStateInstance);
 
-        Log.d(TAG, "create");
+        AssetsToSd atd = new AssetsToSd(getBaseContext());
+        atd.copyFilesToSdCard();
+
+        JniBridge.nativeOnCreate(getBaseContext().getApplicationInfo().dataDir);
 
         GLView = new SampleGLSurfaceView(this);
         setContentView(GLView) ;
@@ -66,6 +62,5 @@ public class SampleActivity extends WearableActivity
     public void onDestroy() {
         Log.d(TAG, "destroy");
         super.onDestroy();  // Always call the superclass
-        //System.exit(0);
     }
 }
